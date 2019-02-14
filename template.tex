@@ -1,0 +1,362 @@
+\documentclass[a4paper, article, oneside, UKenglish]{memoir}
+
+
+%% Encoding
+\usepackage[utf8]{inputenx} % Source code
+\usepackage[T1]{fontenc}    % PDF
+
+
+%% Fonts and typography
+\usepackage{lmodern}           % Latin Modern Roman
+\usepackage[scaled]{beramono}  % Bera Mono (Bitstream Vera Sans Mono)
+\renewcommand{\sfdefault}{phv} % Helvetica
+\usepackage[final]{microtype}  % Improved typography
+\pretitle{\begin{center}\LARGE\sffamily\bfseries}                    % Title
+\renewcommand{\abstractnamefont}{\sffamily\bfseries}                 % Abstract
+\renewcommand*{\chaptitlefont}{\Large\bfseries\sffamily\raggedright} % Chapter
+\setsecheadstyle{\large\bfseries\sffamily\raggedright}               % Section
+
+
+%% Mathematics
+\usepackage{amssymb}   % Extra symbols
+\usepackage{amsthm}    % Theorem-like environments
+\usepackage{thmtools}  % Theorem-like environments
+\usepackage{mathtools} % Fonts and environments for mathematical formuale
+\usepackage{mathrsfs}  % Script font with \mathscr{}
+
+%% Pseduocode
+\usepackage{algorithmicx}
+\usepackage[ruled]{algorithm}
+\usepackage[noend]{algpseudocode}
+
+
+%% Miscellanous
+\usepackage{graphicx}  % Tool for images
+\usepackage{babel}     % Automatic translations
+\usepackage{csquotes}  % Quotes
+\usepackage{textcomp}  % Extra symbols
+\usepackage{listings}  % Typesetting code
+\lstset{basicstyle = \ttfamily, frame = tb}
+
+
+%% Bibliography
+\usepackage{mathscinet}
+\usepackage[backend = biber, style = authoryear, isbn=false, doi=false, url=false]{biblatex}
+\addbibresource{bibliography.bib}
+
+
+%% Cross references
+\usepackage{varioref}
+\usepackage{hyperref}
+\urlstyle{sf}
+\usepackage[nameinlink, capitalize, noabbrev]{cleveref}
+
+
+%% Theorem-like environments
+\declaretheorem[style = plain, numberwithin = chapter]{theorem}
+\declaretheorem[style = plain,      sibling = theorem]{corollary}
+\declaretheorem[style = plain,      sibling = theorem]{lemma}
+\declaretheorem[style = plain,      sibling = theorem]{proposition}
+\declaretheorem[style = definition, sibling = theorem]{definition}
+\declaretheorem[style = definition, sibling = theorem]{example}
+\declaretheorem[style = remark,    numbered = no]{remark}
+
+
+%% Delimiters
+\DeclarePairedDelimiter{\p}{\lparen}{\rparen}   % Parenthesis
+\DeclarePairedDelimiter{\set}{\lbrace}{\rbrace} % Set
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}   % Absolute value
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}  % Norm
+
+
+%% Operators
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+%% New commands for sets
+\newcommand{\N}{\mathbb{N}}   % Natural numbers
+\newcommand{\Z}{\mathbb{Z}}   % Integers
+\newcommand{\Q}{\mathbb{Q}}   % Rational numbers
+\newcommand{\R}{\mathbb{R}}   % Real numbers
+\newcommand{\C}{\mathbb{C}}   % Complex numbers
+\newcommand{\A}{\mathbb{A}}   % Affine space
+\renewcommand{\P}{\mathbb{P}} % Projective space
+
+%% Add numbers to unnumbered equations
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+%% New commands for vectors
+\renewcommand{\a}{\mathbf{a}}
+\renewcommand{\b}{\mathbf{b}}
+\renewcommand{\c}{\mathbf{c}}
+\renewcommand{\v}{\mathbf{v}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\1}{\mathbf{1}}
+
+%% New commands for matrices
+\newcommand{\D}{\mathbf{D}}
+\renewcommand{\A}{\mathbf{A}}
+\newcommand{\B}{\mathbf{B}}
+
+
+
+%%New commands for superscript vectors
+\newcommand{\xt}{\mathbf{x}^{(t)}}
+\newcommand{\ut}{\mathbf{u}^{(t)}}
+\newcommand{\xtt}{x^{(t)}} %for components
+\newcommand{\utt}{u^{(t)}}
+
+
+%%New commands for norms 
+\newcommand{\norms}[2]{\lVert #1 \rVert_{#2}}
+\DeclarePairedDelimiterXPP\llnorm[1]{}\lVert\rVert{_2}{#1}
+\DeclarePairedDelimiterXPP\lnorm[1]{}\lVert\rVert{_1}{#1}
+
+
+%%Column j of matrix
+\newcommand{\mcol}[1]{\mathbf{{#1}}_{\cdotp,j}}
+\newcommand{\mcoll}[2]{{\mathbf{#1}}_{\cdotp,#2}}
+
+%% Miscellanous
+\renewcommand{\qedsymbol}{\(\blacksquare\)}
+
+
+\title{STK-MAT2011 \\ Dictionary learning for sparse coding}
+\author{Student: Emil Haugen \\ Supervisor: Odd Kolbjørnsen}
+
+
+\begin{document}
+
+
+\maketitle
+
+
+\begin{abstract}
+    \noindent
+    In this paper we examine dictionary learning for sparse encoding, an unsupervised technique used for representing a vector as a sparse linear combination of basis vectors. After presenting the initial optimization problem, we look closely at the two subroutines that we alternate between to solve the problem. Finally, we summarize the results in an algorithm which can be used to learn a dictionary and a sparse code from the data. 
+\end{abstract}
+
+
+\chapter{Introduction}
+
+
+To begin with, we introduce the concepts of dictionary learning for sparse coding. This is an unsupervised representation learning method for extracting key features from a data vector encoded in a sparse representation. 
+
+More precisely, given a set of data vectors $\{\ut\}_{t=1}^T \subset \R^m$, we want to find a set of vectors $\{\xt\}_{t=1}^T \subset \R^k$ and a matrix $\D \in \R^{m \times k}$ such that we solve the optimization problem
+
+\begin{equation} \label{objective}
+    \min_D 
+        \frac{1}{T} \sum_{t=1}^{T} 
+                        \min_{\xt} \frac{1}{2}
+                        \llnorm*{\ut - \D \xt}^2
+                        + \lambda \lnorm*{\xt} 
+\end{equation}
+where $\norms{\cdot}{1}$ and $\norms{\cdot}{2}$ are the $\ell_1$ and $\ell_2$-norms respectively. The first term in the sum above is small when the difference between the true data $\ut$ and the reconstructed data $\D \xt$ is small. The second term is a regularization term that is small when the $\xt$ vectors are sparse, i.e.\ they have many zeros. Thus \eqref{objective} is a trade-off between getting an accurate reconstruction of the data and keeping the $\xt$ sparse. 
+
+The parameter $\lambda$ is a positive real number, which acts as a regularization tuning parameter. The matrix $\D$ is referred to as the \emph{dictionary}. We may have $k > m$, such that the representation $\xt$ has higher dimension, but the $\ell_1$- regularization term will force this vector to be sparse, i.e.\ it will have many zero entries. Finally, we constrain the columns of $\D$ to be of unit $\ell_2$-norm. If not, we could solve the minimization problem \eqref{objective} by taking the entries of $\xt$ to be arbitrarily small and increase the entries of $\D$ to decrease the first term of \eqref{objective}.
+
+We will tackle the minimization problem \eqref{objective} one variable at a time, alternating between optimizing with respect to the dictionary $\D$ and the sparse representation $\xt$, keeping one fixed while varying the other at each step. An online algorithm for solving the problem is proposed by \parencite{Mai+09}. We will follow the same strategy, but do it offline instead.
+
+In \cref{sec:sparsecode} and \cref{sec:dictup} we look closely at the subroutines where we optimize \eqref{objective} with respect to $\xt$ and $\D$ respectively. In \cref{sec:efficiency}, we observe that the dictionary update step can be done more efficiently than the naive way suggested immediately. Finally, in \cref{sec:algo}, we give a global algorithm where we bring together the previous sections and use the entire data set to produce a learned dictionary and sparse code.
+
+\chapter{Dictionary learning and sparse coding}
+
+\section{Sparse coding using the LASSO} \label{sec:sparsecode}
+Creating a sparse code $\xt$ is the subproblem of minimizing the loss function
+
+\begin{equation} \label{lasso}
+l(\ut, \D) = \frac{1}{2} \llnorm*{\ut - \D\xt}^2 + \lambda \norms{\xt}{1}
+\end{equation}
+%
+given an input vector $\ut$ and a dictionary $\D$ which are considered fixed. Thus we only minimizie \eqref{lasso} with respect to the vector $\xt$ and view it as independent from $\D$. In reality, $\xt$ naturally depends on $\D$, but assuming independence is a useful heuristic for solving the problem approximately, which is originally NP-hard \parencite{Tillman15}. Then, \eqref{lasso} is the well known LASSO regression problem from statistics \parencite{Tibs96}. The non-diferentiable $\ell_1$ penalty term means that we can not use e.g. gradient descent in a straightforward manner. However, both terms of the objective function are convex so the sum is convex. Thus we are guaranteed to have a unique global optimum. One widely used algorithm for finding an optimal $\xt$ is the least-angle regression (LARS) algorithm \parencite{efron04}. This is also the one suggested by \parencite{Mai+09} in their online algorithm. 
+
+
+\section{Dictionary update} \label{sec:dictup}
+For the dictionary update step, we consider $\xt$ to be fixed in \eqref{objective} and vary only $\D$. Thus, the $\ell_1$ term is constant, and so we get the least squares problem. Unlike in ordinary least squares, we are optimizing with respect to a matrix.
+
+\begin{equation} \label{update}
+    \min_D  \frac{1}{T} \sum_{t=1}^T \frac{1}{2} \llnorm*{\ut - \D\xt}^2.
+\end{equation}
+One way to do this, is to iterate through the columns $\D_{\cdotp,j}$ of $\D$, for $j=1, \dots, k$. Thinking of each column of $\D$ as a \emph{block} of variables, this method is a variation of \emph{block coordinate descent}. Unlike gradient descent, this method has the advantage of being non-parametric, in that it does not require a \emph{learning rate} that must be tuned in order to control the convergence. More precisely, we consider  
+
+\begin{equation} \label{dcol}
+    \frac{1}{T} \sum_{t=1}^T \frac{1}{2} \llnorm*{\ut - \D\xt}^2
+\end{equation}
+as a function of \(\mcol{D}\) i.e. column $j$ of $\D$, and all other columns are considered constant. 
+We first take the gradient and set it to zero:
+\begin{align*}
+    0 &= \frac{1}{T} \sum_{t=1}^T \bigg(\ut - \D\xt\bigg) \xtt_j \\
+\end{align*}
+We then isolate the variable $\mcoll{D}{j}$ by noting that the matrix product (and our estimate of the original vector $\ut$) may be written as a sum over the columns: $\D \xt = \sum_i \mcoll{D}{i} \xtt_i$ where $\xtt_i$ is the $i$-th component of the vector $\xt$.
+\begin{align*}
+    0 &= \sum_{t=1}^T \bigg( \ut - 
+                        \bigg(\sum_{i\neq j} \mcoll{D}{i} \xtt_i\bigg) - \mcol{D} \xtt_j 
+                        \bigg)
+                        \xtt_j\\
+    \sum_{t=1}^T\mcol{D} (\xtt_j)^2&= 
+                        \sum_{t=1}^T \bigg( \ut - 
+                        \bigg(\sum_{i\neq j} \mcoll{D}{i} \xtt_i\bigg)
+                        \bigg)
+                        \xtt_j  \numberthis \label{eq:djdiff}                                         
+\end{align*}
+Finally, we note that in the sum on the left hand side of \eqref{eq:djdiff}, we can take $\mcoll{D}{j}$ outside to get 
+
+\begin{align} \label{dj}
+            \mcol{D} &= \frac{1}{\sum_{t=1}^T (\xtt_j)^2}
+                        \sum_{t=1}^T \bigg( \ut - 
+                        \bigg(\sum_{i\neq j} \mcoll{D}{i} \xtt_i\bigg)
+                        \bigg)
+                        \xtt_j.  
+\end{align}
+Repeating the calculation \eqref{dj} for each column $j=1, \dots, k$ gives us the updated dictionary. We then normalize the columns and use this updated dictionary and go back to the LASSO sparse coding problem, keeping $D$ fixed to the new value to improve the estimate for $\xt$. Then we update the dictionary again, and alternate between solving these two problems until some convergence criterion is satisfied. 
+
+
+
+
+
+\section{Improving dictionary update efficiency} \label{sec:efficiency}
+We can rewrite the calculation in \eqref{dj} to significantly reduce the computational burden. Namely, we can rewrite \eqref{dj} by distributing the sum in the numerator and the term $\xtt_j$ at the end of the expression to obtain
+
+\begin{align}
+ \mcol{D} &= \frac{1}{\sum_{t=1}^T (\xtt_j)^2}
+                        \Bigg[ 
+                        \bigg( \sum_{t=1}^T  \ut \xtt_j \bigg) 
+                        - \sum_{i\neq j} \mcoll{D}{i} 
+                                \bigg( \sum_{t=1}^T \xtt_i \xtt_j
+                        \bigg)
+                        \Bigg] \label{djscalar}\\
+        &= \frac{1}{A_{j, j}} \big( \mcoll{B}{j} - \D \mcoll{A}{j} + \mcoll{D}{j} A_{j, j}) \label{djmatrix}
+\end{align}
+where $\A$ and $\B$ are sums of outer products:
+\begin{align*}
+    \A &= \sum_{t=1}^T \xt (\xt)^T \\
+    \B &= \sum_{t=1}^T \ut (\xt)^T.
+\end{align*}
+In \eqref{djmatrix} we have to add $\mcoll{D}{j} A_{j,j}$ because the sum being subtracted in \eqref{djscalar} is over all columns but $j$.
+
+The formulation \eqref{djmatrix} for updating column $j$ of the dictionary $\D$ gives an improved efficiency because we only need to calculate the matrices $\A$ and $\B$ once, then we can store them in memory while iterating over the columns in $\D$. This saves a lot of computation compared to calculating every term of \eqref{djscalar} in each iteration of the while loop in \cref{Algorithm:dictupdate} below.
+
+\section{Global algorithm} \label{sec:algo}
+Before giving a final algorithm, we formalize the dictionary update step from \cref{sec:dictup} in terms of its input and output. 
+
+\alglanguage{pseudocode}
+\begin{algorithm}
+\small
+\caption{Dictionary Update}
+\label{Algorithm:dictupdate}
+\textbf{Input:}
+Previous dictionary $\D \in \R^{m\times k}$. 
+Matrices \(\A = \sum_{t=1}^T \xt (\xt)^T \in \R^{k\times k}\),\hspace{5mm}
+\(\B = \sum_{t=1}^T \ut (\xt)^T \in \R^{m\times k}\).
+\begin{algorithmic}[1]
+    \vspace{2mm}
+    \While {\(\D\) has not converged}
+    \For{\(j = 1, \dots,   k\)}
+    \vspace{2mm}
+    \State let \(\mcoll{D}{j} =  \frac{1}{A_{j, j}} \big( \mcoll{B}{j} - \D \mcoll{A}{j} + \mcoll{D}{j} A_{j, j}) \)
+    \vspace{2mm}
+    \State let \(\mcoll{D}{j} = \mcoll{D}{j}/\llnorm*{\mcoll{D}{j}}\)
+    \EndFor
+    \EndWhile
+    \vspace{1mm}
+\Statex
+\end{algorithmic}
+  \vspace{-0.4cm}%
+\textbf{Return:}
+Updated dictionary \(\D\)
+\end{algorithm}
+
+Now we can formulate the global algorithm 
+
+\alglanguage{pseudocode}
+\begin{algorithm}
+\small
+\caption{Global Dictionary Learning}
+\label{Algorithm:dictlearn}
+\textbf{Input:}
+Data vector $\ut \in \R^m$ for $t=1, \dots, T$. Initial dictionary $\D_0 \in \R^{m\times k}$.
+\begin{algorithmic}[1]
+    \vspace{2mm}
+    \State let \(\D = \D_0\)
+    \While {\(\D\) has not converged}
+    \For{\(t = 1, \dots,   T\)}
+    \State let \(\xt = \argmin_{\mathbf{x}} \frac{1}{2} \llnorm*{\ut - \D \mathbf{x}}^2 + \lambda \lnorm*{\mathbf{x}}\) (using LARS)
+    \EndFor 
+    \vspace{2mm}
+    \State let \(\A = \sum_{t=1}^T \xt (\xt)^T \)
+    \vspace{2mm}
+    \State let \(\B = \sum_{t=1}^T \ut (\xt)^T\)
+    \vspace{2mm}
+    \State Update $\D$ using \cref{Algorithm:dictupdate} with $\D, \A$ and $\B$ as inputs.
+    \EndWhile
+    \vspace{1mm}
+\Statex
+\end{algorithmic}
+  \vspace{-0.4cm}%
+\textbf{Return:}
+Final dictionary $\D$ and sparse codes $\xt$ for $t=1, \dots, T$.
+\end{algorithm}
+
+
+\printbibliography
+
+
+
+\end{document}
+
+
+\chapter{Body of the Work}
+
+
+Full proofs, numerical implementations.
+
+\begin{theorem}[Pythagoras]
+    \label{thm:pythagoras}
+    In a right triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides. That is,
+    \begin{align}
+        \label{eq:pythagoras}
+            a^2 + b^2 = c^2,
+    \end{align}
+    where \(c\) is the length of the hypotenuse and \(a\) and \(b\) are the lengths of the two other sides.
+\end{theorem}
+
+\begin{proof}
+    Draw a figure.
+\end{proof}
+
+\chapter{Conclusions}
+
+
+Optional. Results, consequences, future work.
+
+\cref{tab:numbers} lists some integers satisfying \cref{eq:pythagoras} of \cref{thm:pythagoras}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{ccc}
+        \toprule
+        \(\boldsymbol{a}\) & \(\boldsymbol{b}\) & \(\boldsymbol{c}\)
+        \\
+        \midrule
+        3 & 4 & 5
+        \\
+        65 & 72 & 97
+        \\
+        \bottomrule
+    \end{tabular}
+    \caption{Some interesting numbers}
+    \label{tab:numbers}
+\end{table}
+
+
+\printbibliography
