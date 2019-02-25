@@ -1,4 +1,4 @@
-function dictionary = dictionary_update(D, A, B, tol, max_iter)
+function D = dictionary_update(D, A, B, tol, max_iter)
     % DICTIONARY_UPDATE update dictionary using block coordinate descent
     % 
     %  param D (matrix): current dictionary.
@@ -23,7 +23,7 @@ function dictionary = dictionary_update(D, A, B, tol, max_iter)
         D(:,j) = dj / (norm(dj) * A(j,j));
     end 
     
-    i = 0;
+    i = 0; %continiue updating dictionary until convergence or max iter 
     while norm(D - D_prev, "fro") > tol && i < max_iter
         D_prev = D;
         for j = 1:k
@@ -31,7 +31,6 @@ function dictionary = dictionary_update(D, A, B, tol, max_iter)
             D(:,j) = dj / (norm(dj) * A(j,j));
         end
         i = i + 1;
-    end    
-    dictionary = D;        
+    end           
 end
 
