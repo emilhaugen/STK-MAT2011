@@ -1,6 +1,7 @@
 function B = flatten(A)
-%flatten 2d-array to 1d
-AT = transpose(A);
-B = AT(:);
+    %FLATTEN helper method to flatten matrix to 1D vector
+    %flatten 2d-array to 1d
+    AT = transpose(A); %transpose to flatten by row
+    B = AT(:);
 end
 
