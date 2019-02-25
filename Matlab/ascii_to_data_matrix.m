@@ -1,11 +1,11 @@
 function data = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN)
     % ASCII_TO_DATA_MATRIX convert ASCII file to data matrix U used in DL.
     %   
-    %  FILENAME: (string) containing location of ASCII file
+    %  pram FILENAME: (string) containing location of ASCII file
     %  
-    %  SUBSET_LEN: (int) usually a power of two
+    %  param SUBSET_LEN: (int) usually a power of two
     %
-    %  BLOCK_LEN: (int) must divide SUBSET_LEN 
+    %  param BLOCK_LEN: (int) must divide SUBSET_LEN 
     % 
     %    Divides subset (square) image into blocks of size 
     %        BLOCK_LEN*BLOCK_LEN 

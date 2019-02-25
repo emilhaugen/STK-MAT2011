@@ -18,9 +18,13 @@ function dictionary = dictionary_update(D, A, B, tol, max_iter)
     k = Ddim(2);
     
     D_prev = D;
-    D = zeros(m, k);
+    for j = 1:k %initial update
+        dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j); 
+        D(:,j) = dj / (norm(dj) * A(j,j));
+    end 
+    
     i = 0;
-    while norm(D - D_prev, "fro") > tol & i < max_iter
+    while norm(D - D_prev, "fro") > tol && i < max_iter
         D_prev = D;
         for j = 1:k
             dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j);

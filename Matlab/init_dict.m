@@ -15,7 +15,7 @@ function D = init_dict(U)
     Udim = size(U);
     k = Udim(2); %no. of cols in U
     
-    %sample columns with replacement
+    %sample columns with replacement 
     D = datasample(s, U, k, 2, 'replace', true); 
 end
 
