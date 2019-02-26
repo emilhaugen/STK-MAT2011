@@ -14,7 +14,6 @@ function [D, X, A, B] = dictionary_learning(U, D_init, tol, max_iter)
     %
     
     Udim = size(U);
-    m = Udim(1);
     T = Udim(2);
     
     Ddim = size(D_init); %same no. of rows as U, CODE_LEN cols
