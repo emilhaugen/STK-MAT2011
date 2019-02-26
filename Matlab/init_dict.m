@@ -13,7 +13,7 @@ function D = init_dict(U, CODE_LEN)
     %                        as U. No. of columns equal to CODE_LEN.
     
     
-    rng(10, 'twister');
+    rng(42, 'twister');
     s = RandStream('mlfg6331_64');
     
     %sample CODE_LEN columns with replacement 
