@@ -6,6 +6,10 @@
 %
 %
 %
+addpath("Utility_Functions");
+addpath("Preprocess");
+
+
 SUBSET_LEN = 64;
 BLOCK_LEN = 8; %data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
 CODE_LEN = 100; %length of sparse code vectors, no. of colums in dictionary
