@@ -6,7 +6,7 @@
 %
 %
 %
-SUBSET_LEN = 32;
+SUBSET_LEN = 64;
 BLOCK_LEN = 8;
 CODE_LEN = 20; %length of sparse code vectors
 
