@@ -9,6 +9,9 @@ function X = lasso_sparse_coding(U, D, X, T)
     %  param X (matrix): current sparse code vectors
     %
     %  param T (int): no. of columns in U, aka no. of data vectors
+    if abs(min(diag(A))) < 1e-10
+        error("Error: Zero diagonal element in A")
+    
     
     for j = 1:T
         [b, fitinfo] = lasso(D, U(:,j)); 
