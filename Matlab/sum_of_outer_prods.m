@@ -11,6 +11,14 @@ function outer = sum_of_outer_prods(X, Y)
     %
     %   Return outer (matrix): Sum of outer products. (c x m matrix)
     %
-    outer = X * transpose(Y);
+
+    c = length(X(:,1)); %no. of rows
+    m = length(Y(:,1));
+    T = length(X(1,:)); %no. of columns must be same in X and Y
+    
+    outer = zeros(c, m);
+    for j = 1:T
+        outer = outer + X(:,j) * transpose(Y(:,j));
+    end    
 end
 
