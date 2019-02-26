@@ -15,6 +15,6 @@ function X = lasso_sparse_coding(U, D, X, T)
         %b is matrix, columns correspond to distinct lambda.
         [minMSE, minIndex] = min(fitinfo.MSE); %use lambda which min. MSE
         %fitinfo.MSE(minIndex)
-        X(:,j) = b(:,minIndex);
+        X(:,j) = b(:,1);
     end 
 end
