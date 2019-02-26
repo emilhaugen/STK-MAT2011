@@ -1,4 +1,4 @@
-function D = dictionary_update(D, A, B, tol, max_iter)
+function D = dictionary_update(D_prev, A, B, tol, max_iter)
     % DICTIONARY_UPDATE update dictionary using block coordinate descent
     % 
     %  param D (matrix): current dictionary.
@@ -14,25 +14,13 @@ function D = dictionary_update(D, A, B, tol, max_iter)
     %  param max_iter (int): maximum no. of iterations
     %
     %
-    %  Return D (matrix): updated matrix.
+    %  Return D (matrix): updated dictionary matrix.
     
-    Ddim = size(D);
-    m = Ddim(1);
-    CODE_LEN = Ddim(2);
-    
-    D_prev = D;
-    for j = 1:CODE_LEN %initial update, iterate over columns of D
-        dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j); 
-        D(:,j) = dj / (norm(dj) * A(j,j));
-    end 
+    [D, D_prev] = dictionary_update_util(D_prev, A, B);
     
     i = 0; %continiue updating dictionary until convergence or max iter 
     while norm(D - D_prev, "fro") > tol && i < max_iter
-        D_prev = D;
-        for j = 1:CODE_LEN
-            dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j);
-            D(:,j) = dj / (norm(dj) * A(j,j));
-        end
+        [D, D_prev] = dictionary_update_util(D_prev, A, B);
         i = i + 1;
     end           
 end
