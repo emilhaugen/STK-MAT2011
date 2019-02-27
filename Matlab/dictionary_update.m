@@ -1,4 +1,4 @@
-function [D, D_prev, updated, i]  = dictionary_update(D_prev, A, B, tol, max_iter)
+function [D, D_input, updated, i]  = dictionary_update(D_prev, A, B, tol, max_iter)
     % DICTIONARY_UPDATE update dictionary using block coordinate descent
     % 
     %  param D (matrix): current dictionary.
@@ -15,10 +15,15 @@ function [D, D_prev, updated, i]  = dictionary_update(D_prev, A, B, tol, max_ite
     %
     %
     %  Return D (matrix): updated dictionary matrix.
+    %
+    %  Return D_input (matrix): unchanged input dictionary to check 
+    %                            for convergence in dictionary_learning()
+    %
     
+    D_input = D_prev;
     [D, D_prev, updated] = dictionary_update_util(D_prev, A, B);
     
-    i = 0; %continiue updating dictionary until convergence or max iter 
+    i = 0; % continiue updating dictionary until convergence or max iter 
     while norm(D - D_prev, "fro") > tol && i < max_iter
         [D, D_prev, updated] = dictionary_update_util(D, A, B);
         i = i + 1;
