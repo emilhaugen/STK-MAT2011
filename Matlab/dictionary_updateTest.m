@@ -8,6 +8,7 @@
 %
 addpath("Help_Functions"); %make help functions available
 addpath("Preprocess");
+addpath("Data");
 
 %set constants
 FILENAME = "Restoration.txt";
