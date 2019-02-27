@@ -25,7 +25,7 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
     %                               Mainly for testing/debugging.
     %
     
-    CODE_LEN = length(D_prev(1,:)); % no. of columns in dictionary;
+    CODE_LEN = length(D_prev(1,:)); % no. of columns in dictionary 
     D = D_prev;
     updated = zeros(CODE_LEN, 1);
     

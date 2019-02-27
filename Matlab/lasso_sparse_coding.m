@@ -1,4 +1,4 @@
-function X = lasso_sparse_coding(U, D, X, T)    
+function X = lasso_sparse_coding(U, D)    
     % LASSO_SPARSE_CODING Get sparse codes x^t for vectors u^t 
     %                     (columns in U) by solving LASSO, keeping D fixed.
     %
@@ -6,17 +6,15 @@ function X = lasso_sparse_coding(U, D, X, T)
     % 
     %  param D (matrix): current dictionary matrix 
     %
-    %  param X (matrix): current sparse code vectors. All of X is reset
-    %                      in each iteration of LASSO, X is input here
-    %                      only to avoid repeating dimension calculation.
-    %
-    %  param T (int): no. of columns in U, aka no. of data vectors
-    %
     %  Solve LASSO regression problem with constant matrix D and response 
     %   U(:,j) and save resulting coefficients as X(:,j) for j = 1,...,T.
     %   Uses coefficients corresponding to minimum MSE.
     %   
     %  return X (matrix): with LASSO coefficients as columns.
+    
+    T = length(U(1,:)); % no. of columns in U, i.e. no. of data vectors
+    CODE_LEN = length(D(1,:)); % no. of columns in dictionary
+    X = zeros(CODE_LEN, T);
     
     for j = 1:T
         %b is matrix, columns correspond to distinct lambda.

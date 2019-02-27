@@ -1,5 +1,5 @@
 %
-%  Script to test dictionary_update function. Not much to see.
+%  Script to test dictionary_update function. Not much to see here.
 %  
 %   Manually testing alternating optimization between 
 %       LASSO and BCD (block coord. descent)
@@ -25,8 +25,8 @@ T = Udim(2); %using notation T for no. of data vectors as in paper
 D = init_dict(U, CODE_LEN);
 
 %get initial LASSO estimates for X
-X = zeros(CODE_LEN, T);
-X = lasso_sparse_coding(U, D, X, T);
+%X = zeros(CODE_LEN, T);
+X = lasso_sparse_coding(U, D);
 A = sum_of_outer_prods(X, X);
 B = sum_of_outer_prods(U, X);
 
@@ -45,7 +45,7 @@ nnz(updated)
 num_iter
 
 %repeat LASSO
-X = lasso_sparse_coding(U, D, X, T);
+X = lasso_sparse_coding(U, D);
 A = sum_of_outer_prods(X, X);
 B = sum_of_outer_prods(U, X);
 

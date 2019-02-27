@@ -14,9 +14,9 @@ function [D, D_input, updated, i]  = dictionary_update(D_prev, A, B, tol, max_it
     %  param max_iter (int): maximum no. of iterations
     %
     %
-    %  Return D (matrix): updated dictionary matrix.
+    %  return D (matrix): updated dictionary matrix.
     %
-    %  Return D_input (matrix): unchanged input dictionary to check 
+    %  return D_input (matrix): unchanged input dictionary to check 
     %                            for convergence in dictionary_learning()
     %
     
