@@ -1,4 +1,4 @@
-function X = lasso_sparse_coding(U, D)    
+function [X, A, B] = lasso_sparse_coding(U, D)    
     % LASSO_SPARSE_CODING Get sparse codes x^t for vectors u^t 
     %                     (columns in U) by solving LASSO, keeping D fixed.
     %
@@ -23,4 +23,6 @@ function X = lasso_sparse_coding(U, D)
         %fitinfo.MSE(minIndex)
         X(:,j) = b(:,minIndex);
     end 
+    A = X*X';
+    B = U*X';
 end
