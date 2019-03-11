@@ -17,6 +17,9 @@ function [X, A, B] = lasso_sparse_coding(U, D)
     X = zeros(CODE_LEN, T);
     
     for j = 1:T
+        if mod(j, 100) == 0
+            fprintf("Lasso Iteration %d of %d\n", j, T)
+        end    
         %b is matrix, columns correspond to distinct lambda.
         [b, fitinfo] = lasso(D, U(:,j)); 
         [minMSE, minIndex] = min(fitinfo.MSE); %use lambda which min. MSE

@@ -1,4 +1,4 @@
-function data = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN)
+function [data, U_subset] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN)
     % ASCII_TO_DATA_MATRIX convert ASCII file to data matrix U used in DL.
     %   
     %  pram FILENAME: (string) containing location of ASCII file
@@ -15,7 +15,6 @@ function data = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN)
     
     U = dlmread(FILENAME);
     U_subset = U(1:SUBSET_LEN, 1:SUBSET_LEN); %top left corner of image
-    %imshow(mat2gray(U_subset))
 
     subset_block_ratio = SUBSET_LEN / BLOCK_LEN; %no. of blocks per column/row
     p = subset_block_ratio^2; %no. of columns in final data matrix

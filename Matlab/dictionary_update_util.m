@@ -28,13 +28,16 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
     CODE_LEN = length(D_prev(1,:)); % no. of columns in dictionary 
     D = D_prev;
     updated = zeros(CODE_LEN, 1);
+    fprintf("Smallest input dict entry: %0.5e\n", min(abs(D(:))));
     
     for j = 1:CODE_LEN % iterate over columns of D
         % update column j in D iff A(j,j) != 0.
-        if abs(A(j,j)) > 1e-8
+        if abs(A(j,j)) > 1e-2
             updated(j) = 1;
-            dj = B(:,j) - D_prev*A(:,j) + D_prev(:,j)*A(j,j); 
+            dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j); 
             D(:,j) = dj / (norm(dj) * A(j,j));
         end
     end 
+    diff = norm(D - D_prev, "fro");
+    fprintf("D-D_prev=%0.5e\n", diff);
 end
