@@ -14,18 +14,20 @@ T = length(U(1,:));
 M = mean(U, 2);
 V = U - M; % put data on mean deviation form
 
-[P, E]=eig(V*V');
+%[P, E]=eig(V*V');
 
 % will use principal components whose corresponding ratio 
 % eigenvalue/trace(E) is at least explian_tol
 explain_tol = 1e-3; 
 
 % get no. of princ. comp. that have eigenvalue above threshold
-pc_filter = diag(E) / trace(E) > explain_tol;
-num_pc = sum(pc_filter); % will be length of sparse codes
+%pc_filter = diag(E) / trace(E) > explain_tol;
+%num_pc = sum(pc_filter); % will be length of sparse codes
 
 % use principal components corresponding to num_pc highest eigenvalues
-D = P(:,end-num_pc+1:end); 
+%D = P(:,end-num_pc+1:end);
+
+[D, P, E] = PCA(U, explain_tol);
 
 pca_coefficients = D' * V;
 reconstruct = patches_to_original(D * pca_coefficients);
