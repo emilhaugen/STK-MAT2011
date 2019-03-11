@@ -28,6 +28,7 @@ function [D, D_input, updated, i]  = dictionary_update(D_prev, A, B, tol, max_it
         [D, D_prev, updated] = dictionary_update_util(D, A, B);
         i = i + 1;
     end
-    norm(D - D_prev, "fro")
+    diff = norm(D - D_prev, "fro");
+    fprintf("norm(D-D_prev) = %.4e after %d iterations.\n", diff, i); 
 end
 
