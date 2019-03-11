@@ -15,9 +15,9 @@ function [X, A, B] = lasso_sparse_coding(U, D)
     T = length(U(1,:)); % no. of columns in U, i.e. no. of data vectors
     CODE_LEN = length(D(1,:)); % no. of columns in dictionary
     X = zeros(CODE_LEN, T);
-    
+    tic
     for j = 1:T
-        if mod(j, 100) == 0
+        if mod(j, 50) == 0
             fprintf("Lasso Iteration %d of %d\n", j, T)
         end    
         %b is matrix, columns correspond to distinct lambda.
@@ -25,7 +25,9 @@ function [X, A, B] = lasso_sparse_coding(U, D)
         [minMSE, minIndex] = min(fitinfo.MSE); %use lambda which min. MSE
         %fitinfo.MSE(minIndex)
         X(:,j) = b(:,minIndex);
-    end 
+    end
+    fprintf("Lasso execution time for %d iterations: \n", T)
+    toc
     A = X*X';
     B = U*X';
 end
