@@ -1,5 +1,6 @@
 %
 % perform dictionary learning based on PCA
+% map each data vector to its PCA representation and do DL on new data
 % 
 
 addpath("Help_Functions"); %make help functions available
@@ -8,34 +9,87 @@ addpath("Data");
 
 FILENAME = "Restoration.txt";
 SUBSET_LEN = 896; % should be > 64 to avoid too many zeros in diag(A)
-BLOCK_LEN = 32; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
+BLOCK_LEN = 16; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
    
 % read data into block form
-[U, original] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN); % time < 1.5 sec
+[U, original] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN); % < 1.5 sec
 
-[V, P, E, U] = PCA(U, 1e-3); % explain_tol can be arbitrarily low here
+% use eig.vectors of U*U' containing more than explain_tol of 
+% total variance in data trace(U*U')
+explain_tol = 1e-3;
+[V, P, E, U] = PCA(U, explain_tol);
 
-% use MAX_CODE_LEN or all components if fewer than MAX_CODE_LEN
-% take MAX_CODE_LEN to be twice the number of significant components
-MAX_CODE_LEN = 2 * length(V(1,:))
-CODE_LEN = min(MAX_CODE_LEN, length(P(1,:))-1);
-D = P(:, end - CODE_LEN + 1 : end); % initial dictionary
+% map each data vector U(:,j) to its low dim. PCA coefficients
+U_pca = V' * U;
 
-[X, A, B] = lasso_sparse_coding(U, D);
-norm(U - D*X, "fro")
+% set params for dictionary learning routine
+CODE_LEN = 50;
+lambda = 0.01;
+dict_tol = 1e-4;
+dict_iter = 10;
+max_iter = 10;
 
-[D, D_prev, upd, i] = dictionary_update(D, A, B, 1e-8, 50);
-
-norm(U - D*X, "fro")
-
-[X, A, B] = lasso_sparse_coding(U, D);
-norm(U - D*X, "fro")
-
-[D, D_prev, upd, i] = dictionary_update(D, A, B, 1e-8, 50);
-
-norm(U - D*X, "fro")
+[D, X, A, B, updated, n, i] = dictionary_learning(U_pca, CODE_LEN, ...
+                                lambda, dict_tol, max_iter, dict_iter);
 
 
+                                        
 
 
- 
+%{
+[X, A, B] = lasso_sparse_coding(U_pca, D, lambda);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+
+[D, D_prev, updated, i] = dictionary_update(D, A, B, 1e-6, 10);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+[X, A, B] = lasso_sparse_coding(U_pca, D, lambda);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+[D, D_prev, updated, i] = dictionary_update(D, A, B, 1e-6, 10);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+[X, A, B] = lasso_sparse_coding(U_pca, D, lambda);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+[D, D_prev, updated, i] = dictionary_update(D, A, B, 1e-6, 10);
+nrm = norm(U_pca, "fro");
+diff = norm(U_pca - D*X, "fro"); 
+fprintf("Abs.diff = %.3e, Rel.diff = %.3e\n", diff, diff/nrm);
+
+manually try some lasso for a few of the data vectors
+j = 230;
+dataj = U_pca(:,j);
+tic
+[B, fitinfo] = lasso(D, dataj, "CV", 5);
+toc
+lassoPlot(B, fitinfo, "PlotType", "CV");
+legend("show")
+figure()
+[mse, i] = min(fitinfo.MSE);
+coef = B(:,i);
+D * coef
+U_pca(:,j);
+r = D*coef;
+i
+mse
+plot(dataj)
+hold on 
+plot(r)
+hold on 
+plot(dataj - r)
+legend("orig", "rec", "diff")
+hold off
+%}
+            
