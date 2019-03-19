@@ -32,12 +32,12 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
     
     for j = 1:CODE_LEN % iterate over columns of D
         % update column j in D iff A(j,j) != 0.
-        if abs(A(j,j)) > 1e-2
+        if abs(A(j,j)) > 1e-4
             updated(j) = 1;
             dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j); 
-            D(:,j) = dj / (norm(dj) * A(j,j));
+            D(:,j) = dj / (max(1, norm(dj)) * A(j,j));
         end
     end 
     diff = norm(D - D_prev, "fro");
-    %fprintf("D-D_prev=%0.5e\n", diff);
+    fprintf("D-D_prev=%0.5e\n", diff);
 end
