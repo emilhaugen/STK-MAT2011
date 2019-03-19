@@ -1,4 +1,4 @@
-function [X, A, B] = lasso_sparse_coding(U, D)    
+function [X, A, B] = lasso_sparse_coding(U, D, lambda)    
     % LASSO_SPARSE_CODING Get sparse codes x^t for vectors u^t 
     %                     (columns in U) by solving LASSO, keeping D fixed.
     %
@@ -8,7 +8,6 @@ function [X, A, B] = lasso_sparse_coding(U, D)
     %
     %  Solve LASSO regression problem with constant matrix D and response 
     %   U(:,j) and save resulting coefficients as X(:,j) for j = 1,...,T.
-    %   Uses coefficients corresponding to minimum MSE.
     %   
     %  return X (matrix): with LASSO coefficients as columns.
     
@@ -20,13 +19,11 @@ function [X, A, B] = lasso_sparse_coding(U, D)
         if mod(j, 50) == 0
             fprintf("Lasso Iteration %d of %d\n", j, T)
         end    
-        %b is matrix, columns correspond to distinct lambda.
-        [b, fitinfo] = lasso(D, U(:,j)); 
-        [minMSE, minIndex] = min(fitinfo.MSE); %use lambda which min. MSE
-        %fitinfo.MSE(minIndex)
-        X(:,j) = b(:,minIndex);
+        % b is matrix, columns correspond to distinct lambda
+        % or just 1D-vector if lambda specified
+        X(:,j) = lasso(D, U(:,j), "Lambda", lambda); 
     end
-    fprintf("Lasso execution time for %d iterations: \n", T)
+    fprintf("Lasso execution time for %d iterations at lambda=%.2e: \n", T, lambda)
     toc
     A = X*X';
     B = U*X';
