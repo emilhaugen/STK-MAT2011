@@ -14,10 +14,15 @@ function plot_dictionary(D, V, BLOCK_LEN, directory)
     % 
     %   return NOTHING
     
+    if ~isfolder(directory)
+        error(strcat("Could not find directory named ", directory));
+    end    
+    
+    delete(strcat(directory, "*.png"));
     
     num_atoms = length(D(1,:)); % No. of atoms/columns in dictionary
     rec_dict = V*D; % Reconstructed dictionary
-    
+       
     for j = 1:num_atoms
         patch = reshape(rec_dict(:,j), BLOCK_LEN, BLOCK_LEN)';
         fig = imagesc(patch);
