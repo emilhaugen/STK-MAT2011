@@ -28,7 +28,7 @@ function plot_dictionary(D, V, BLOCK_LEN, directory)
         fig = imagesc(patch);
         colorbar;
         title(sprintf("Atom no. %d of %d", j, num_atoms));
-        saveas(fig, strcat(directory, sprintf("Atom%d.png", j)));
+        saveas(fig, strcat(directory, sprintf("Atom%02d.png", j)));
     end    
 end
 
