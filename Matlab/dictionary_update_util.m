@@ -34,8 +34,8 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
         % update column j in D iff A(j,j) != 0.
         if abs(A(j,j)) > 1e-4
             updated(j) = 1;
-            dj = B(:,j) - D*A(:,j) + D(:,j)*A(j,j); 
-            D(:,j) = dj / (max(1, norm(dj)) * A(j,j));
+            dj = (B(:,j) - D*A(:,j) + D(:,j)*A(j,j)) / A(j,j); 
+            D(:,j) = dj / max(1, norm(dj));
         end
     end 
     diff = norm(D - D_prev, "fro");
