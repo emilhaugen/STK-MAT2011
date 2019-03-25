@@ -30,5 +30,6 @@ function [D, D_prev, X, A, B, updated, i] = dictionary_learning_util(U, D_prev, 
     % iterative dictionary update subroutine
     [D, D_prev, updated, i] = dictionary_update(D_prev, A, B, dict_tol, dict_iter);
     %norm(D - D_prev, "fro");
+
 end
 
