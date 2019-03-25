@@ -9,7 +9,7 @@ addpath("Data");
 
 FILENAME = "Restoration.txt";
 SUBSET_LEN = 896; % should be > 64 to avoid too many zeros in diag(A)
-BLOCK_LEN = 16; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
+BLOCK_LEN = 32; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
    
 % read data into block form
 [U, original] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN); % < 1.5 sec
@@ -24,15 +24,15 @@ U_pca = V' * U;
 
 % set params for dictionary learning routine
 CODE_LEN = 50;
-lambda = 0.01;
-dict_tol = 1e-4;
+lambda = 0.05;
+dict_tol = 1e-2;
 dict_iter = 10;
 max_iter = 10;
 
 [D, X, A, B, updated, n, i] = dictionary_learning(U_pca, CODE_LEN, ...
                                 lambda, dict_tol, max_iter, dict_iter);
 
-
+plot_dictionary(D, V, BLOCK_LEN, "Plots/DictionaryPlots");
                                         
 
 
