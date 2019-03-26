@@ -28,7 +28,6 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
     CODE_LEN = length(D_prev(1,:)); % no. of columns in dictionary 
     D = D_prev;
     updated = zeros(CODE_LEN, 1);
-    %fprintf("Smallest input dict entry: %0.5e\n", min(abs(D(:))));
     
     for j = 1:CODE_LEN % iterate over columns of D
         % update column j in D iff A(j,j) != 0.

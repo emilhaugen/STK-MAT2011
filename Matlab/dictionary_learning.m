@@ -20,12 +20,14 @@ function [D, X, A, B, updated, niter, i] = dictionary_learning(U, CODE_LEN,...
     D_init = init_dict(U, CODE_LEN);
     
     [D, D_prev, X, A, B, updated, niter] = dictionary_learning_util(U, D_init,...
-                                                lambda, tol, dict_iter);
-    i = 0;
-    while norm(D - D_prev, "fro") > tol && i < max_iter
+                                                lambda, tol, dict_iter, 1);
+    i = 2;
+    % iterate while estimate of orig. data improves
+    while norm(U - D_prev*X, "fro") - norm(U - D*X, "fro") < 1e-10 && i < max_iter
      [D, D_prev, X, A, B, updated, niter] = dictionary_learning_util(U, D, ...
-                                                lambda, tol, dict_iter);
-     i = i + 1;
+                                                lambda, tol, dict_iter, i);
+     i = i + 1;                                       
     end  
+    
 end
 
