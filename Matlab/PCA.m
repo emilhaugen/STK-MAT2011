@@ -26,14 +26,9 @@ function [signf_comp, P, D, U]  = PCA(U, tol)
     % number of significant components
     num_signf_pc = sum(diag(D) / trace(D) > tol);
     
-    if num_signf_pc > 0
-        % use closest square to num_signf_pc to get square patches
-        i = num_signf_pc;
-        while mod(sqrt(i), 1) > 1e-14
-            i = i + 1;
-        end    
-        fprintf("%d significant PCs, using %d to get square patches\n", num_signf_pc, i);
-        signf_comp = P(:,end-i+1:end); 
+    if num_signf_pc > 0   
+        fprintf("%d significant PCs\n", num_signf_pc)
+        signf_comp = P(:,end-num_signf_pc+1:end); 
     else     
         error(sprintf("No significant principal components at tolreance %.1e", tol));  
 end
