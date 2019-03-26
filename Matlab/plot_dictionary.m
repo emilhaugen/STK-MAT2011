@@ -1,5 +1,5 @@
 function plot_dictionary(D, V, BLOCK_LEN, directory)
-    % PLOT_DICTIONARY plot atoms of dictionary
+    % PLOT_DICTIONARY plot atoms of dictionary and reconstruction
     % 
     %   param D (matrix): dictionary
     %
@@ -27,8 +27,8 @@ function plot_dictionary(D, V, BLOCK_LEN, directory)
         patch = reshape(rec_dict(:,j), BLOCK_LEN, BLOCK_LEN)';
         fig = imagesc(patch);
         colorbar;
-        title(sprintf("Atom no. %d of %d", j, num_atoms));
-        saveas(fig, strcat(directory, sprintf("Atom%02d.png", j)));
+        title(sprintf("Atom no. %d of %d\n", j, num_atoms));
+        saveas(fig, strcat(directory, sprintf("Atom%03d.png", j)));
     end    
 end
 
