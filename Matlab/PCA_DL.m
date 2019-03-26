@@ -2,6 +2,7 @@
 % perform dictionary learning based on PCA
 % map each data vector to its PCA representation and do DL on new data
 % 
+clear 
 
 addpath("Help_Functions"); %make help functions available
 addpath("Preprocess");
@@ -23,8 +24,8 @@ explain_tol = 1e-3;
 U_pca = V' * U;
 
 % set params for dictionary learning routine
-CODE_LEN = 50;
-lambda = 0.05;
+CODE_LEN = 100;
+lambda = 0.1;
 dict_tol = 1e-2;
 dict_iter = 10;
 max_iter = 10;
@@ -32,7 +33,21 @@ max_iter = 10;
 [D, X, A, B, updated, n, i] = dictionary_learning(U_pca, CODE_LEN, ...
                                 lambda, dict_tol, max_iter, dict_iter);
 
-plot_dictionary(D, V, BLOCK_LEN, "Plots/DictionaryPlots");
+write_dir = strcat("Plots/Dictionary/", ...
+                    sprintf("numAtoms=%d-lambda=%.2e/", CODE_LEN, lambda));                            
+
+mkdir(write_dir);                
+                
+plot_dictionary(D, V, BLOCK_LEN, write_dir);
+
+diff = norm(V*U_pca - V*D*X, "fro");
+rel_diff = diff / norm(V*U_pca);
+fig = imagesc(patches_to_original(V*D*X, BLOCK_LEN, SUBSET_LEN, SUBSET_LEN));
+title(strcat(sprintf("norm(original - reconstruct) = %.3e\n", diff), ...
+                sprintf("relative norm = %.3e\n", rel_diff), ...
+                sprintf("After %d DL iterations", i-1)));
+colorbar;            
+saveas(fig, strcat(write_dir, "reconstruct.png"));
                                         
 
 
