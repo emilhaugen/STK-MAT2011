@@ -37,6 +37,6 @@ function [D, D_prev, updated] = dictionary_update_util(D_prev, A, B)
             D(:,j) = dj / max(1, norm(dj));
         end
     end 
-    diff = norm(D - D_prev, "fro");
-    fprintf("D-D_prev=%0.5e\n", diff);
+    %diff = norm(D - D_prev, "fro");
+    %fprintf("D-D_prev=%0.5e\n", diff);
 end

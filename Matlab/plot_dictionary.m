@@ -5,7 +5,7 @@ function plot_dictionary(D, V, BLOCK_LEN, directory)
     %
     %   param V (matrix): eigenvectors to map PCA dictionary back to 
     %                      original format. If already on original format,
-    %                      use identity matrix.
+    %                      use identity matrix eye(length(D(:,1)))
     %   
     %   param BLOCK_LEN (int): side length of square patches needed for
     %                           reconstruction

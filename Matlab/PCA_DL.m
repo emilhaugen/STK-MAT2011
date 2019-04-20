@@ -10,7 +10,7 @@ addpath("Data");
 
 FILENAME = "Restoration.txt";
 SUBSET_LEN = 896; % should be > 64 to avoid too many zeros in diag(A)
-BLOCK_LEN = 32; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
+BLOCK_LEN = 16; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
    
 % read data into block form
 [U, original] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN); % < 1.5 sec
@@ -18,34 +18,36 @@ BLOCK_LEN = 32; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
 % use eig.vectors of U*U' containing more than explain_tol of 
 % total variance in data trace(U*U')
 explain_tol = 1e-3;
-[V, P, E, U] = PCA(U, explain_tol);
+[V, P, E, K] = PCA(U, explain_tol);
 
 % map each data vector U(:,j) to its low dim. PCA coefficients
 U_pca = V' * U;
 
 % set params for dictionary learning routine
-CODE_LEN = 100;
-lambda = 0.1;
+CODE_LEN = 150; % Number of atoms 
+lambda = 0.05; % training time increases as lambda decreases
 dict_tol = 1e-2;
-dict_iter = 10;
-max_iter = 10;
+dict_iter = 20;
+max_iter = 20;
 
 [D, X, A, B, updated, n, i] = dictionary_learning(U_pca, CODE_LEN, ...
                                 lambda, dict_tol, max_iter, dict_iter);
 
-write_dir = strcat("Plots/Dictionary/", ...
+write_dir = strcat("Plots/PcaDL/", ...
                     sprintf("numAtoms=%d-lambda=%.2e/", CODE_LEN, lambda));                            
-
-mkdir(write_dir);                
+  
+if ~isfolder(write_dir)
+    mkdir(write_dir);               
+end    
                 
-plot_dictionary(D, V, BLOCK_LEN, write_dir);
+plot_dictionary(D, eye(length(D(:,1))), BLOCK_LEN, write_dir);
 
-diff = norm(V*U_pca - V*D*X, "fro");
-rel_diff = diff / norm(V*U_pca);
-fig = imagesc(patches_to_original(V*D*X, BLOCK_LEN, SUBSET_LEN, SUBSET_LEN));
+diff = norm(U - D*X, "fro");
+rel_diff = diff / norm(U, "fro");
+fig = imagesc(patches_to_original(D*X, BLOCK_LEN, SUBSET_LEN, SUBSET_LEN));
 title(strcat(sprintf("norm(original - reconstruct) = %.3e\n", diff), ...
                 sprintf("relative norm = %.3e\n", rel_diff), ...
-                sprintf("After %d DL iterations", i-1)));
+                sprintf("After %d DL iterations\n", i)));
 colorbar;            
 saveas(fig, strcat(write_dir, "reconstruct.png"));
                                         
