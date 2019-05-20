@@ -23,7 +23,7 @@ function data = patches_to_original(patches, BLOCK_LEN, ncol, nrow)
              col_start = 1 + (j-1)*BLOCK_LEN;
              col_end = j*BLOCK_LEN;
              data(row_start:row_end,col_start:col_end) = ...
-              transpose(reshape(patches(:,counter), BLOCK_LEN, BLOCK_LEN));
+              reshape(patches(:,counter), BLOCK_LEN, BLOCK_LEN)';
              counter = counter + 1;
         end
     end    
