@@ -1,4 +1,4 @@
-function beta = ADM(y, D, lambda, rho, rho_scale, tol, max_iter)
+function [beta_null, i] = ADM(y, D, lambda, rho, rho_scale, tol, max_iter)
     % ADM implement Alternating Direction Method to find sparse
     %   coefficients in prediction by relaxation.
     %
@@ -11,7 +11,7 @@ function beta = ADM(y, D, lambda, rho, rho_scale, tol, max_iter)
     %   param lambda (float): fixed regularization parameter
     %
     %   param rho (float): relaxation parameter. Initially small, 
-    %                       increase exponentially as algorithm iterates.
+    %                       increases as algorithm iterates.
     %
     %   param rho_scale (float): mulitply rho by this each iteration 
     %
@@ -22,22 +22,29 @@ function beta = ADM(y, D, lambda, rho, rho_scale, tol, max_iter)
     %   return beta (float): sparse coefficients 
     
     % initialize relaxation parameter to zero
-    n = length(D(:,1));
-    beta_null = zeros(n); 
-    
+    num_atoms = length(D(1,:));
+    beta_null = zeros(num_atoms, 1); 
+    DTD = D'*D;
     % initial estimate for beta
-    beta = inv(D' * D/rho + eye(n)) * (D'*y/rho + beta_null);
+    beta = inv(DTD/rho + eye(num_atoms)) * (D'*y/rho + beta_null);
+    for j = 1:num_atoms
+        beta_null(j) = sign(beta(j)) * max(0, abs(beta(j))-lambda/rho);
+    end
     i = 0;
-    while norm(y-D*beta) + lambda(norm(beta_null, 1)) + ...
-      rho*norm(beta - beta_null) > tol && i < max_iter
+    error = norm(y-D*beta)/norm(y);
+    while error > tol && i < max_iter % repeat
+      % take beta_null constant  
+      %norm_beta = norm(beta)
+      beta = inv(DTD/rho + eye(num_atoms)) * (D'*y/rho + beta_null);
       % taking beta constant, optimize wrt. beta_null:
       % using component wise rule,
       % beta_null = sgn(beta)*max(0, abs(beta) - lambda/rho)
-      for j = 1:n
+      for j = 1:num_atoms
         beta_null(j) = sign(beta(j)) * max(0, abs(beta(j))-lambda/rho);
       end
-      beta = inv(D'*D/rho + eye(n)) * (D'*y/rho + beta_null);
-      rho = rho*rho_scale;
+      % take beta_null constant
+      %error = norm(y-D*beta)/norm(y);
+      rho = rho_scale * rho;
       i = i + 1;
     end
 end
