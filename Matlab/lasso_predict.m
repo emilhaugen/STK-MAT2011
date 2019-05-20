@@ -3,6 +3,18 @@ function lasso_pred = lasso_predict(target, D, L, lambda, BLOCK_LEN)
     %   Lasso regression is run on each block of the target image to
     %   recosntruct it from the atoms of the dictionary D.
     %   Assuming target and blocks are square.
+    %
+    %   param target (matrix): image to predict patch-wise
+    %
+    %   param D (matrix): dictionary
+    %
+    %   param L (matrix): sigma^(-.5)
+    %
+    %   param lamdba (float): lasso regularization parameter
+    %
+    %   param BLOCK_LEN (int): length of square blocks 
+    %
+    
     
     SUBSET_LEN = length(target(1,:));
     lasso_pred = zeros(SUBSET_LEN, SUBSET_LEN);
