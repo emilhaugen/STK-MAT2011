@@ -10,30 +10,30 @@ BLOCK_LEN = 32; % data subset will have SUBSET_LEN^2 / BLOCK_LEN^2 vectors
 [U, original] = ascii_to_data_matrix(FILENAME, SUBSET_LEN, BLOCK_LEN); % time < 1.5 sec
 T = length(U(1,:));
 
-% Principal Component Analysis (slow by-hand method, use SVD for speed)
-M = mean(U, 2);
-V = U - M; % put data on mean deviation form
-
-%[P, E]=eig(V*V');
-
 % will use principal components whose corresponding ratio 
 % eigenvalue/trace(E) is at least explian_tol
-explain_tol = 1e-3; 
+explain_tol = 1e-4; % epsilon
 
-% get no. of princ. comp. that have eigenvalue above threshold
-%pc_filter = diag(E) / trace(E) > explain_tol;
-%num_pc = sum(pc_filter); % will be length of sparse codes
+[V, P, E, U] = PCA(U, explain_tol);
 
-% use principal components corresponding to num_pc highest eigenvalues
-%D = P(:,end-num_pc+1:end);
+y = diag(E);
+k = length(y(y > 1e+3))
+k = 200;
+y_big = y(end-k+1:end);
+n = length(y_big);
+fig = scatter(linspace(1, n, n), y_big);
+title(sprintf("Biggest %d eigenvalues", n));
+set(gca, "yscale", "log")
+saveas(fig, "Plots/PcaPlots/Biggest.png")
 
-[D, P, E] = PCA(U, explain_tol);
+y_small = y(1:end-k);
+n = length(y_small);
+fig = scatter(linspace(1, n, n), y_small);
+title(sprintf("Smallest %d eigenvalues", n));
+set(gca, "yscale", "log")
+saveas(fig, "Plots/PcaPlots/Smallest.png")
 
-pca_coefficients = D' * V;
-reconstruct = patches_to_original(D * pca_coefficients);
-
-diff = norm(original - reconstruct, "fro");
-
+%{
 fig = imagesc(original);
 colorbar
 title("Original data (centered)")
@@ -45,7 +45,7 @@ title(sprintf("Reconstructed from %d PC's at tolerance %0.1e with %dx%d patches\
                 num_pc, explain_tol, BLOCK_LEN, BLOCK_LEN, diff))
             
 saveas(fig, sprintf("Plots/PCA_Reconstruction-%dPCs-BLOCK_LEN=%d.png", num_pc, BLOCK_LEN))            
-
+%}
 
 
 
